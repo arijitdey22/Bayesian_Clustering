@@ -1,4 +1,5 @@
 library(readr)
+library(dplyr)
 
 ## =========================================================================
 ## 001 File
@@ -8,7 +9,7 @@ map.1.1 <- list(
   cn     = c("ssn",        # 1–5
              "vital.st",   # 6
              "blank01",    # 7–31
-             "sex",        # 32
+             "sex",        # 32  
              "race",       # 33
              "mar.st",     # 34
              "blank02")    # 35–80
@@ -27,32 +28,33 @@ NHEFS.1.1 <- NHEFS.1.1[ , !startsWith(names(NHEFS.1.1), "blank")]
 
 columns <- c(
              "ssn",          # 1-5
-             "blank01",      # 6-1162
+             "blank00",      # 6-406
+             "gen.hlth",     # 407
+             "blank01",      # 408-1162
              "hist.hrt.att", # 1163
              "blank02",      # 1164-1198
              "hist.TIA",     # 1199
              "blank03",      # 1200-1204
              "hist.CVA",     # 1205
              "blank04",      # 1206-1239
-             "dia.hbp",      # 1240
+             "med.hbp",      # 1240
              "blank05",      # 1241-1262
-             "dia.med",      # 1263
+             "med.dia",      # 1263
              "blank06",      # 1264-1991
              "smoke",        # 1992
              "blank07",      # 1993-2128
              "alcohol",      # 2129-2130
              "blank08",      # 2131-3710
              "hist.arth",    # 3711
-             "blank09",      # 3712-4148
-             "wght.on",      # 4149
+             "blank09",      # 3712-4149
              "weight",       # 4150-4152
              "blank10"       # 4153-end
 )
 
-starts <- c(1, 6, 1163, 1164, 1199, 1200, 1205, 1206, 1240, 1241, 1263, 1264, 
-            1992, 1993, 2129, 2131, 3711, 3712, 4149, 4150, 4153)
-ends   <- c(5, 1162, 1163, 1198, 1199, 1204, 1205, 1239, 1240, 1262, 1263, 
-            1991, 1992, 2128, 2130, 3710, 3711, 4148, 4149, 4152, NA) 
+starts <- c(1, 6, 407, 408, 1163, 1164, 1199, 1200, 1205, 1206, 1240, 1241, 1263, 1264, 
+            1992, 1993, 2129, 2131, 3711, 3712, 4150, 4153)
+ends   <- c(5, 406, 407, 1162, 1163, 1198, 1199, 1204, 1205, 1239, 1240, 1262, 1263, 
+            1991, 1992, 2128, 2130, 3710, 3711, 4149, 4152, NA) 
 cn     <- columns
 
 NHEFS.1.4 <- read_fwf(
@@ -64,11 +66,15 @@ NHEFS.1.4 <- read_fwf(
 NHEFS.1.4 <- NHEFS.1.4[ , !startsWith(names(NHEFS.1.4), "blank")]
 
 ## =========================================================================
-## Analysis 
+## Saving the data 
 
 dim(NHEFS.1.1)
 dim(NHEFS.1.4)
 
-length(intersect(NHEFS.1.1$ssn, NHEFS.1.4$ssn))
+NHEFS.1 <- full_join(NHEFS.1.1, NHEFS.1.4, by = "ssn")
 
-save(NHEFS.1.1, NHEFS.1.4, file = "NHEFS_1.Rdata")
+colnames(NHEFS.1)
+dim(NHEFS.1)
+mean(is.na(NHEFS.1))
+
+save(NHEFS.1, file = "NHEFS_1.Rdata")

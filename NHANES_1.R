@@ -10,15 +10,13 @@ columns <- c(
   "race",      # 103
   "sex",       # 104
   "mar.st",    # 105
-  "dob",       # 106-109
-  "blank02",   # 110-319
   "weight",    # 320-324
   "height",    # 325-327
   "blank03"    # 328-end
 )
 
-starts <- c(1, 6, 101, 103, 104, 105, 106, 110, 320, 325, 328)
-ends   <- c(5, 100, 102, 103, 104, 105, 109, 319, 324, 327,  NA)
+starts <- c(1, 6, 101, 103, 104, 105, 320, 325, 328)
+ends   <- c(5, 100, 102, 103, 104, 105, 324, 327,  NA)
 cn <- columns
 
 url <- "https://wwwn.cdc.gov/nchs/data/nhanes1/DU4701.txt"
@@ -90,4 +88,44 @@ NHANES.1.3 <- read_fwf(
 
 NHANES.1.3 <- NHANES.1.3[ , !startsWith(names(NHANES.1.3), "blank")]
 
-save(NHANES.1.1, NHANES.1.2, NHANES.1.3, file = "NHANES_1.Rdata")
+## =========================================================================
+## 4171 File
+
+columns <- c(
+  "ssn",       # 1-5
+  "blank01",   # 6-208
+  "gen.hlth",  # 209
+  "blank02"    # 210-end
+)
+
+starts <- c(1, 6, 209, 210)
+ends   <- c(5, 208, 209, NA)
+cn <- columns
+
+url <- "https://wwwn.cdc.gov/nchs/data/nhanes1/DU4171.txt"
+
+NHANES.1.4 <- read_fwf(
+  file = url,
+  col_positions = fwf_positions(starts, ends, col_names = cn),
+  col_types = cols(.default = col_character())
+)
+
+NHANES.1.4 <- NHANES.1.4[ , !startsWith(names(NHANES.1.4), "blank")]
+
+## =========================================================================
+## Saving the data 
+
+dim(NHANES.1.1)
+dim(NHANES.1.2)
+dim(NHANES.1.3)
+dim(NHANES.1.4)
+
+NHANES.1 <- full_join(NHANES.1.1, NHANES.1.2, by = "ssn")
+NHANES.1 <- full_join(NHANES.1, NHANES.1.3, by = "ssn")
+NHANES.1 <- full_join(NHANES.1, NHANES.1.4, by = "ssn")
+
+colnames(NHANES.1)
+dim(NHANES.1)
+mean(is.na(NHANES.1))
+
+save(NHANES.1, file = "NHANES_1.Rdata")

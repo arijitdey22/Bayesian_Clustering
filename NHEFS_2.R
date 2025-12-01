@@ -28,7 +28,9 @@ NHEFS.2.1 <- NHEFS.2.1[ , !startsWith(names(NHEFS.2.1), "blank")]
 
 columns <- c(
           "ssn",           # 1-5
-          "blank01",       # 6-408
+          "blank00",       # 6-404
+          "gen.hlth",      # 405-406
+          "blank01",       # 407-408
           "hist.arth",     # 409-410
           "blank02",       # 411-510
           "hist.hrt.att",  # 511-512
@@ -51,10 +53,10 @@ columns <- c(
           "blank11"        # 1111-1107
 )
 
-starts <- c(1, 6, 409, 411, 511, 513, 515, 517, 523, 525, 563, 565,
+starts <- c(1, 6, 405, 407, 409, 411, 511, 513, 515, 517, 523, 525, 563, 565,
             633, 635, 649, 651, 1051,1053,1069,1071,1108,1111)
 
-ends   <- c(5, 408, 410, 510, 512, 514, 516, 522, 524, 562, 564, 632,
+ends   <- c(5, 404, 406, 408, 410, 510, 512, 514, 516, 522, 524, 562, 564, 632,
             634, 648, 650, 1050,1052,1068,1070,1107,1110, NA)
 
 cn     <- columns
@@ -68,11 +70,15 @@ NHEFS.2.2 <- read_fwf(
 NHEFS.2.2 <- NHEFS.2.2[ , !startsWith(names(NHEFS.2.2), "blank")]
 
 ## =========================================================================
-## Analysis 
+## Saving the data 
 
 dim(NHEFS.2.1)
 dim(NHEFS.2.2)
 
-length(intersect(NHEFS.2.1$ssn, NHEFS.2.2$ssn))
+NHEFS.2 <- full_join(NHEFS.2.1, NHEFS.2.2, by = "ssn")
 
-save(NHEFS.2.1, NHEFS.2.2, file = "NHEFS_2.Rdata")
+colnames(NHEFS.2)
+dim(NHEFS.2)
+mean(is.na(NHEFS.2))
+
+save(NHEFS.2, file = "NHEFS_2.Rdata")

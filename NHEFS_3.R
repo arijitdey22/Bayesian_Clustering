@@ -4,7 +4,7 @@ library(readr)
 ## 001 File
 
 map.3.1 <- list(
-  widths = c(5, 4, 2, 2, 170, 2, 273, 2, 5430),
+  widths = c(5, 4, 2, 2, 170, 2, 273, 2, 84, 2, 5344),
   cn     = c("ssn",        # 1-5
              "blank01",    # 6-9
              "sex",        # 10-11
@@ -13,7 +13,9 @@ map.3.1 <- list(
              "race",       # 184-185
              "blank03",    # 186-458
              "mar.st",     # 459-460
-             "blank04")    # 461-5890
+             "blank04",    # 461-544
+             "gen.hlth",   # 545-546
+             "blank05")    # 547-5890
 )
 
 NHEFS.3.1 <- read_fwf(
@@ -61,11 +63,15 @@ NHEFS.3.4 <- read_fwf(
 NHEFS.3.4 <- NHEFS.3.4[ , !startsWith(names(NHEFS.3.4), "blank")]
 
 ## =========================================================================
-## Analysis 
+## Saving the data 
 
 dim(NHEFS.3.1)
 dim(NHEFS.3.4)
 
-length(intersect(NHEFS.3.1$ssn, NHEFS.3.4$ssn))
+NHEFS.3 <- full_join(NHEFS.3.1, NHEFS.3.4, by = "ssn")
 
-save(NHEFS.3.1, NHEFS.3.4, file = "NHEFS_2.Rdata")
+colnames(NHEFS.3)
+dim(NHEFS.3)
+mean(is.na(NHEFS.3))
+
+save(NHEFS.3, file = "NHEFS_3.Rdata")
